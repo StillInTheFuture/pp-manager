@@ -12,12 +12,14 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.10",
+    "axios": "^1.2.1",
     "element-plus": "^2.2.26",
     "pinia": "^2.0.26",
     "sass": "^1.56.1",
     "sass-loader": "^13.2.0",
     "unplugin-element-plus": "^0.4.1",
     "vue": "^3.2.45",
+    "vue-axios": "^3.5.2",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
