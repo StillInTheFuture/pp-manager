@@ -2,7 +2,7 @@
   <div class="about">
     <h1>This is an about page</h1>
     
-    <el-button>1111</el-button>
+    <el-button type="primary">1111</el-button>
     <el-icon><location /></el-icon>
     <el-icon><check /></el-icon>
 
