@@ -3,9 +3,16 @@ import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ElMessage } from 'element-plus'
 import { BASE_URL, TIME_OUT } from './config';
  
+type PendingType = {
+    url: string | undefined,
+    method: string | undefined,
+    cancel: Function
+}
+
 export class Request {
     public static axiosInstance: AxiosInstance;
- 
+    private static pendingRequests: PendingType[] = [];
+
     public static init() {
         // 创建axios实例
         this.axiosInstance = axios.create({
@@ -15,15 +22,22 @@ export class Request {
             }, 
             timeout: TIME_OUT,
         });
-        // 初始化拦截器
         this.initInterceptors();
-        return axios;
+        return axios
     }
  
     // 初始化拦截器
     public static initInterceptors() {
         this.axiosInstance.interceptors.request.use(
             (config: AxiosRequestConfig) => {
+                this.abortPending(config);
+                config.cancelToken = new axios.CancelToken((c) => {
+                    this.pendingRequests.push({
+                        url: config.url,
+                        method: config.method,
+                        cancel: c
+                    })
+                })
                 // const token = localStorage.getItem('ACCESS_TOKEN');
                 // if (token) {
                 //     config.headers.Authorization = 'Bearer ' + token;
@@ -36,6 +50,8 @@ export class Request {
         );
         this.axiosInstance.interceptors.response.use(
             (response: AxiosResponse) => {
+                // 在一个ajax响应后再执行一下取消操作，把已经完成的请求从pending中移除
+                this.abortPending(response.config); 
                 if (response.status === 200) {
                     const { retCode, message } = response.data || {}
                     // todo
@@ -49,23 +65,24 @@ export class Request {
             (error: any) => {
                 const { response } = error;
                 if (response) {
-                    // 请求已发出，但是不在2xx的范围
+                    // 请求已发出，但是不在2xx的范围，如104、500等
                     this.errorHandle(response);
                     return Promise.reject(response.data);
                 } else {
-                    // 处理断网的情况
-                    ElMessage.error('The network connection is abnormal. Please try again later!');
+                    // 取消请求
+                    if(axios.isCancel(error)){
+                        console.log('cancel axios')
+                    }else{  
+                        // 处理断网的情况
+                        ElMessage.error('The network connection is abnormal. Please try again later!');
+                    }
                 }
             }
         );
     }
  
-    /**
-     * http握手错误
-     * @param res 响应回调,根据不同响应进行不同操作
-     */
+    // http握手错误
     private static errorHandle(res: any) {
-        // 状态码判断
         switch (res.status) {
             case 401:
                 break;
@@ -76,6 +93,18 @@ export class Request {
                 break;
             default:
                 ElMessage.error('Connection error');
+        }
+    }
+
+    // 移除重复请求
+    private static abortPending(config: AxiosRequestConfig){
+        for (const prs in this.pendingRequests) {
+            const list:PendingType = this.pendingRequests[prs];
+            if (!config || (list.url == config.url && list.method == config.method)) {
+              // 执行取消操作 并把这条记录从数组中移除
+              list.cancel();
+              this.pendingRequests.splice(+prs, 1)
+            }
         }
     }
  
