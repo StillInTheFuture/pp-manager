@@ -3,6 +3,9 @@ import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ElMessage } from 'element-plus'
 import { BASE_URL, TIME_OUT } from './config';
  
+// 需要跳转到login的错误码，如登录凭证失效/登录凭证未提供/非管理员账号等
+const INVALID_CODE = [403, 401];
+
 type PendingType = {
     url: string | undefined,
     method: string | undefined,
@@ -38,10 +41,12 @@ export class Request {
                         cancel: c
                     })
                 })
+
                 // const token = localStorage.getItem('ACCESS_TOKEN');
                 // if (token) {
                 //     config.headers.Authorization = 'Bearer ' + token;
                 // }
+
                 return config;
             },
             (error: any) => {
@@ -53,9 +58,14 @@ export class Request {
                 // 在一个ajax响应后再执行一下取消操作，把已经完成的请求从pending中移除
                 this.abortPending(response.config); 
                 if (response.status === 200) {
-                    const { retCode, message } = response.data || {}
-                    // todo
-                    // ...
+                    const { retCode, message } = response.data || {};
+                    if(retCode!= 200){
+                        ElMessage.error(message);
+                        if(INVALID_CODE.includes(retCode)){
+                            // todo
+                            // toLogin()
+                        }
+                    }
                     return response.data
                 } else {
                     this.errorHandle(response);
