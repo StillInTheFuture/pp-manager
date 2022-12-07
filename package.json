@@ -15,6 +15,7 @@
     "axios": "^1.2.1",
     "element-plus": "^2.2.26",
     "pinia": "^2.0.26",
+    "qs": "^6.11.0",
     "sass": "^1.56.1",
     "sass-loader": "^13.2.0",
     "unplugin-element-plus": "^0.4.1",
@@ -24,7 +25,8 @@
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.4",
-    "@types/node": "^18.11.9",
+    "@types/node": "^18.11.11",
+    "@types/qs": "^6.9.7",
     "@vitejs/plugin-vue": "^3.2.0",
     "@vue/eslint-config-typescript": "^11.0.0",
     "@vue/tsconfig": "^0.1.3",

@@ -1,10 +1,10 @@
 import { Request } from '@/services/request';
+import qs from 'qs'
  
- 
-export function login (parameter: any)  {
-    return Request.axiosInstance({
-        url: '/cxLogin',
-        method: 'post',
-        data: parameter
-    })
+type loginData = {
+    email: string,
+    password: string
+}
+export function login (data: loginData)  {
+    return Request.axiosInstance.post('/sys/login', qs.stringify(data))
 }

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ElMessage } from 'element-plus'
+import { BASE_URL, TIME_OUT } from './config';
  
 export class Request {
     public static axiosInstance: AxiosInstance;
@@ -8,11 +9,11 @@ export class Request {
     public static init() {
         // 创建axios实例
         this.axiosInstance = axios.create({
-            baseURL: '/api',
+            baseURL: BASE_URL,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
             }, 
-            timeout: 6000
+            timeout: TIME_OUT,
         });
         // 初始化拦截器
         this.initInterceptors();
@@ -30,7 +31,6 @@ export class Request {
                 return config;
             },
             (error: any) => {
-                console.log(error);
                 return Promise.reject(error)
             },
         );
@@ -38,9 +38,11 @@ export class Request {
             (response: AxiosResponse) => {
                 if (response.status === 200) {
                     const { retCode, message } = response.data || {}
+                    // todo
+                    // ...
                     return response.data
                 } else {
-                    Request.errorHandle(response);
+                    this.errorHandle(response);
                     return Promise.reject(response.data);
                 }
             },
@@ -48,11 +50,11 @@ export class Request {
                 const { response } = error;
                 if (response) {
                     // 请求已发出，但是不在2xx的范围
-                    Request.errorHandle(response);
+                    this.errorHandle(response);
                     return Promise.reject(response.data);
                 } else {
                     // 处理断网的情况
-                    ElMessage.error('网络连接异常,请稍后再试!');
+                    ElMessage.error('The network connection is abnormal. Please try again later!');
                 }
             }
         );
@@ -70,10 +72,10 @@ export class Request {
             case 403:
                 break;
             case 404:
-                ElMessage.error('请求的资源不存在');
+                ElMessage.error('The requested resource does not exist');
                 break;
             default:
-                ElMessage.error('连接错误');
+                ElMessage.error('Connection error');
         }
     }
  
