@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ElMessage } from 'element-plus'
+import Storage from '@/utils/storage'
 import { BASE_URL, TIME_OUT } from './config';
  
 // 需要跳转到login的错误码，如登录凭证失效/登录凭证未提供/非管理员账号等
@@ -10,6 +11,15 @@ type PendingType = {
     url: string | undefined,
     method: string | undefined,
     cancel: Function
+}
+
+declare module "axios" {
+    interface AxiosResponse<T = any> {
+        // 这里追加后台参数
+        retCode: null,
+        result: null
+    }
+    export function create(config?: AxiosRequestConfig): AxiosInstance;
 }
 
 export class Request {

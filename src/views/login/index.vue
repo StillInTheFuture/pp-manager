@@ -15,6 +15,7 @@
 <script  setup lang="ts">
     import { defineComponent, reactive } from "vue";
     import { login } from '@/api/user'
+    import Storage from '@/utils/storage'
 
     const loginForm = reactive({
         account: '',
@@ -29,8 +30,11 @@
             email: loginForm.account,
             password: loginForm.password
         }
-        login(param).then(response => {
-            console.log(111, response)
+        login(param).then(res => {
+            console.log(111, res)
+            if(res.retCode == 200){
+                Storage.set('token', res.result)
+            }
         //   const res: any = response.data
         //   if(res.code === 200){
         //     localStorage.setItem('ACCESS_TOKEN', res.data);
