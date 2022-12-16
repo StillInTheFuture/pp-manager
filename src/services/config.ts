@@ -4,11 +4,15 @@ if (process.env.NODE_ENV === 'development') {
 } else if (process.env.NODE_ENV === 'production') {
     BASE_URL = ''
 } else {
+    // test环境
     BASE_URL = ''
 }
 
+const TIMEOUT = 10000
 
-const TIME_OUT = 10000
+const HEADERS = {
+    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+}
 
 
-export { BASE_URL, TIME_OUT }
+export { BASE_URL, TIMEOUT, HEADERS }

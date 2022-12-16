@@ -1,72 +1,150 @@
 <template>
-    <div class="login-container">
-      <div class="content">
+  <div class="login-container">
+    <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" class="login-form" label-position="left">
 
-        <el-input v-model="loginForm.account" placeholder="account" style="width: 350px"></el-input>
-        <el-input type="password" v-model="loginForm.password" placeholder="password" style="width: 350px"></el-input>
-        <el-button :disabled="loginForm.account === '' || loginForm.password === ''" 
-                    style="width: 350px"
-                    @click="handleSubmit">登陆</el-button>
-
+      <div class="title-container">
+        <h3 class="title">Peliplat管理后台</h3>
+        <p class="sub-title">Peliplat Management System</p>
       </div>
-    </div>
+
+      <el-form-item prop="username">
+        <el-input
+          v-model="loginForm.username"
+          placeholder="Username"
+          name="username"
+          type="text"
+          tabindex="1"
+          auto-complete="on"
+          :prefix-icon="User" />
+      </el-form-item>
+
+      <el-form-item prop="password">
+        <el-input
+          :key="passwordType"
+          v-model="loginForm.password"
+          :type="passwordType"
+          placeholder="Password"
+          name="password"
+          tabindex="2"
+          auto-complete="on"
+          :prefix-icon="Lock"
+          @keyup.enter.native="handleLogin" />
+        <span class="show-pass-icon" @click="showPwd">
+          <el-icon>
+            <Hide v-show="passwordType === 'password'" />
+            <View v-show="passwordType === 'text'" />
+          </el-icon>
+        </span>
+      </el-form-item>
+
+      <el-form-item>
+        <el-button type="primary" class="login-btn" :loading="loading" @click="handleLogin(loginFormRef)">Login</el-button>
+      </el-form-item>
+
+    </el-form>
+  </div>
 </template>
    
 <script  setup lang="ts">
-    import { defineComponent, reactive } from "vue";
-    import { login } from '@/api/user'
-    import Storage from '@/utils/storage'
+  import { ref, reactive } from "vue";
+  import type { FormInstance, FormRules } from 'element-plus'
+  import { User, Lock, View, Hide } from '@element-plus/icons-vue'
+  import  useUserStore  from '@/stores/user'
+  import {useRouter} from 'vue-router'
 
-    const loginForm = reactive({
-        account: '',
-        password:''
-    })
+  // init data
+  const loginFormRef = ref<FormInstance>()
+  const loginForm = reactive({
+    username: '',
+    password: ''
+  })
 
-    console.log(222, process.env.NODE_ENV)
+  // rules
+  const loginRules = reactive<FormRules>({
+    username: [{ required: true, message: 'Enter your account', trigger: 'blur' }],
+    password: [
+      { required: true, message: 'Enter your password', trigger: 'blur' },
+      { min: 6, message: 'The password can not be less than 6 digits', trigger: 'blur' }
+    ]
+  })
   
-   
-    const handleSubmit = (e: Event) => {
-        const param =  {
-            email: loginForm.account,
-            password: loginForm.password
+  // change pass type
+  let passwordType = ref('password')
+  const showPwd = () => {
+    passwordType.value = passwordType.value == 'password' ? 'text' : 'password'
+  }
+
+  // sumit
+  let loading = false
+  const userStore = useUserStore()
+  const router = useRouter()
+  const handleLogin = (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    formEl.validate((valid) => {
+      if (valid) {
+        const params =  {
+          email: loginForm.username,
+          password: loginForm.password
         }
-        login(param).then(res => {
-            console.log(111, res)
-            if(res.retCode == 200){
-                Storage.set('token', res.result)
-            }
-        //   const res: any = response.data
-        //   if(res.code === 200){
-        //     localStorage.setItem('ACCESS_TOKEN', res.data);
-        //     router.push("/flow")
-        //   }
+        loading = true
+        userStore.login(params).then(res => {
+          loading = false;
+          console.log(999, res)
+          let redirectUrl: string = (router.currentRoute.value.query.redirect || '/') as string;
+          res && router.push({
+            path: redirectUrl
+          })
         })
-    }
+      } else {
+        return false
+      }
+    })
+  }
+
+</script>
    
-  </script>
-   
-  <style lang="scss" scoped>
-  /* 背景 */
+<style lang="scss" scoped>
+  $bg:#2d3a4b;
+  $dark_gray:#889aa4;
+  $light_gray:#eee;
   .login-container {
-    position: absolute;
+    min-height: 100vh;
     width: 100%;
-    height: 100%;
-    background: #ccc;
-    .content {
-      position: absolute;
-      width:400px;
-      height:300px;
-      left:50%;
-      top:50%;
-      margin-left:-200px;
-      margin-top:-150px;
-   
-      border-radius: 10px;
-      background: #f6efef;
-      box-shadow:  5px 5px 10px #626060,
-        -2px -2px 2px #de18ff;
+    background-color: $bg;
+    .login-form {
+      margin: 0 auto;
+      width: 520px;
+      padding: 160px 35px 0;
+      .title-container {
+        margin-bottom: 40px;
+        text-align: center;
+        color: $light_gray;
+        .title {
+          margin-bottom: 20px;
+          font-size: 26px;
+          font-weight: bold;
+        }
+        .sub-title{
+          font-size: 20px;
+        }
+      }
+      :deep(.el-form-item){
+        margin-bottom: 24px;
+        input, button{
+          height: 40px;
+        }
+      }
+      .show-pass-icon{
+        position: absolute;
+        right: 10px;
+        line-height: 100%;
+        font-size: 16px;
+        color: #a8abb2;
+        cursor: pointer;
+      }
+      .login-btn{
+        width: 100%;
+      }
     }
   }
-   
-   
-  </style>
+</style>

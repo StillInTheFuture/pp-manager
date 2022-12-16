@@ -1,22 +1,24 @@
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-
 import App from './App.vue'
 import router from './router'
-// import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import VueAxios from 'vue-axios'
-import { Request } from '@/services/request';
 
-import './assets/main.css'
+import VueAxios from 'vue-axios'
+import instance from '@/services/intercept';
+
+// import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+
+import store from '@/stores'
+
 import '@/assets/styles/main.scss'
+
+import '@/router/promission'
 
 
 
 const app = createApp(App)
-
-app.use(createPinia())
 app.use(router)
-app.use(VueAxios, Request.init())
+app.use(VueAxios, instance)
+app.use(store)
 
 app.mount('#app')
 
@@ -24,3 +26,5 @@ app.mount('#app')
 // for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 //     app.component(key, component)
 // }
+
+export default app

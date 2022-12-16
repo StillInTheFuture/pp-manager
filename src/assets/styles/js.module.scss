@@ -1,0 +1,18 @@
+@import './variable.scss';
+
+// :export {
+//     menuBg: $menuBg;
+//     menuText: $menuText;
+//     menuActiveText: $menuActiveText;
+// }
+
+:export {
+    menuText: $menuText;
+    menuActiveText: $menuActiveText;
+    subMenuActiveText: $subMenuActiveText;
+    menuBg: $menuBg;
+    menuHover: $menuHover;
+    subMenuBg: $subMenuBg;
+    subMenuHover: $subMenuHover;
+    sideBarWidth: $sideBarWidth;
+  }

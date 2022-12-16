@@ -1,0 +1,29 @@
+@import './reset.css';
+@import './sidebar.scss';
+
+// layout布局
+.header-wrapper{
+    width: 100%;
+    min-width: $minWidth;
+    height: $headerH;
+    background: $headerBg;
+    color: #fff;
+}
+// .layout-wrapper{
+    // display: flex;
+    // width: 100%;
+    // min-width: $minWidth;
+    // min-height: calc(100vh - $headerH);
+    // .sidebar-container{
+    //     flex: 0 0 $menuWidth;
+    //     width: $menuWidth;
+    //     background: $menuBg;
+    //     a{
+    //         color: #fff;
+    //     }
+    // }
+    // .main-container{
+    //     flex: 1;
+    //     background: #fff;
+    // }
+// }

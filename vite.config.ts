@@ -38,5 +38,8 @@ export default defineConfig({
         additionalData: `@use "@/assets/styles/variable.scss" as *;`,
       }
     }
+  },
+  server: {
+    port: 8888
   }
 })

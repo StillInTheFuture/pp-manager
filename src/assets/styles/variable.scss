@@ -1,4 +1,12 @@
-$blue: blue;
+$minWidth: 1200px;
+
+$headerBg: #373D41;
+$headerH: 60px;
+
+$menuBg: #333744;
+$menuWidth: 240px;
+$menuText: #fff;
+$menuActiveText: #409EFF;
 
 // 需改element主题颜色
 // @forward 'element-plus/theme-chalk/src/common/var.scss' with (
@@ -8,3 +16,15 @@ $blue: blue;
 //     ),
 //   ),
 // );
+
+$menuText:#bfcbd9;
+$menuActiveText:#409EFF;
+$subMenuActiveText:#f4f4f5; //https://github.com/ElemeFE/element/issues/12951
+
+$menuBg:#304156;
+$menuHover:#263445;
+
+$subMenuBg:#1f2d3d;
+$subMenuHover:#001528;
+
+$sideBarWidth: 210px;

@@ -1,4 +1,7 @@
-export interface StorageInstance {
+ /**
+  * 废弃，改用pinia-plugin-persist
+  */
+ export interface StorageInstance {
     set(key: string, value: any): void;
     get(key: string): any;
     remove(key: string): void;
@@ -17,7 +20,7 @@ class StorageClass implements StorageInstance {
     }
 }
 
-let Storage = new StorageClass();
+let storage = new StorageClass();
 
-export default Storage;
+export default storage;
   
